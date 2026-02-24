@@ -104,6 +104,33 @@ from powerbiclient import quickvisualise, dataset config, report
 plt.boxplot(data["age"])
 plt.show()
 
+### IQR
+Q3 - Q1
+Inter Quartile range
+Used to show the spread of data and identifying outliers
+Also called whisker plot because has upper and lower whisker
+Upper whisker - (Q3 + 1.5 * IQR). 
+Lower whisker - (Q1 - 1.5 * IQR). 
+
+The middle line in box plot is - Median
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
