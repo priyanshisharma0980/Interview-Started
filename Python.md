@@ -151,7 +151,7 @@ import numpy as np
 
 arr = np.array([10, 12, 12, 13, 12, 11, 300, 14, 13, 12])
 
-# Calculate Q1 (25th percentile) and Q3 (75th percentile)
+Calculate Q1 (25th percentile) and Q3 (75th percentile)
 Q1 = np.percentile(arr, 25)
 Q3 = np.percentile(arr, 75)
 IQR = Q3 - Q1
