@@ -91,7 +91,9 @@ NumPy arrays: Faster, memory-efficient, support vectorized operations, Homogeneo
 
 
 ### What is broadcasting in NumPy?
-Broadcasting allows NumPy to perform operations on arrays of different shapes by automatically expanding dimensions without copying data.
+Broadcasting in NumPy is the ability of NumPy to perform arithmetic operations on arrays of different shapes and sizes without explicitly replicating the data.
+
+
 
 
 ### how to get data from jupyter notebook to powerBI
@@ -113,6 +115,62 @@ Upper whisker - (Q3 + 1.5 * IQR).
 Lower whisker - (Q1 - 1.5 * IQR). 
 
 The middle line in box plot is - Median
+
+
+### NUMPY functions
+Numpy.array
+np.zeros((3,4)) #Create an array of zeros
+np.save('my_array' , a)
+np.subtract()
+np.transpose()
+>>>h.resize((2,6)) #Return a new arraywith shape(2,6)
+>>> np.append(h,g) #Append items to an array
+>>> np.insert(a,1,5)  #Insert items in an array
+>>> np.delete(a,[1])  #Delete items from an array
+np.linspace() - generate an array of evenly spaced values between two specified numbers.
+
+
+### 10. What are some common data types supported by NumPy?
+int
+float
+complex
+bool
+object
+datetime
+
+### How can you concatenate two NumPy arrays vertically?
+We can use vstack OR
+array= np.concatenate((array1, array2), axis=0)
+
+### Convert a multidimensional array to 1D array.
+one_dimensional_array = multidimensional_array.flatten()
+
+
+### How can you identify outliers in a NumPy array?
+import numpy as np
+
+arr = np.array([10, 12, 12, 13, 12, 11, 300, 14, 13, 12])
+
+# Calculate Q1 (25th percentile) and Q3 (75th percentile)
+Q1 = np.percentile(arr, 25)
+Q3 = np.percentile(arr, 75)
+IQR = Q3 - Q1
+Define bounds
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+Identify outliers
+outliers = arr[(arr < lower_bound) | (arr > upper_bound)]
+
+print("Outliers:", outliers)
+
+
+
+
+
+
+
+
+
 
 
 
