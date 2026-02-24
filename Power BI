@@ -1,0 +1,416 @@
+END to END Data Analytics
+Process -
+Extract - Ingest - Transform (these 3 are ETL) - Process - Enrich- Serve
+
+Between Ingest and Transform there is a internal layer callled STAGING
+In STAGING - data file is copied and the actions are performed on copied data file
+Staging is done before transforming the data
+
+To stage data -
+First click transform the data in power BI (like in power query)
+then enter the csv/excel file, then load it
+The in left corner select the name of that file
+Right click on the name - Move to group - New group
+Give name of new group eg. give name as -  staging layer
+Now right click and uncheck the 'Enable load' then continue
+Now make a copy - right click and click on refrence (not duplicate)
+Now keep it in different group
+Now change the name of the copied file
+
+To view this staging layer data in ER diagram type format - In power query only 
+go to view - Query dependencies
+
+Q - MERGE COLUMNS
+# add new column by merging columns in power query 
+go to ADD column - click ctrl to select columns one by one - then MERGE column
+Now in dialoug box select the appropriate and OKAY
+
+Q - Extract birth year from birthdate column
+right click on birthdate (to change the type of column to date  if it is already not)
+select last option - locale
+select there
+
+Q - Using column of number of children, create a new column, if 0 child then N, if any other number then Y
+click ctrl to select column children - go to ADD column - conditional column
+Now in dialoig box select the conditions
+
+
+Now that the column data type is - Date
+Then ctrl to select the birthdate column - go to Add column in ribbon - Date - click year
+
+
+# COULMN PROFILING
+Default column profiling is based on first top 1000 rows in bottom left
+Instead select - based on entire data set
+
+# COLUMN QUALITY - Now in VIEW it shows column quality - if you select it for all columns you will see valid, error and emply percentage
+COLUMN DISTRIBUTION - Now in VIEW it shows column distribution - it shows distinct and unique value numbers
+If the unique and distinct values are equal - That column can be used as PRIMARY KEY
+
+# COLUMN PROFILING
+Now in VIEW it shows column profiling - It shows the details for each column when we select it (details like - min, max, empty, distinct, zero, NAN)
+
+Q - USe column profiling to return distinct product brand and distinct product name
+In VIEW click column profiling - It shows the details 
+select brand and product name column there you can see DISTINCT values
+
+Q - CUSTOM COLUMNS - calculate and add new column for discount_price (proce after discuount -10% discount) 
+custom column is USed to add new column with maths formulas
+ADD COLUMN - Custom column - add your formula
+here 10 % discount so price will be for 90% of original price
+=select column * 0.9
+To round of the resulting table to 2 decimal point -
+Transform - rounding
+
+Q - GROUP BY (to caluclate avg retails proce for brands)
+used in categorical columns
+
+Q - Extract area code from phone umber which is seperated by -
+ctrl + phone number column - add column - extract - text before delimeter
+
+Q - Merge two different csv files into 1 who have same columns
+keep all the files you want to combine in 1 folder (it should not have other files)
+Into power query - home - new source - more - new folder - select that folder - combine and transform
+
+
+
+select product brad column - TRANSFORm - Group by (in lesft side)
+In real world scenarios data group by is usually performed on - DATE
+
+
+
+
+### CONDITIONAL OFRMATTING
+use generally with DAX(KPIs)
+that fx option
+
+
+### # IN TRANSCATIONAL database, use the STAR SCHEMA data model
+It consists of a central "fact table" containing quantitative metrics and foreign keys, 
+surrounded by multiple "dimension tables" that provide context to the facts.
+Dimensions are - Customer, Products, Date, Region  (these are all TABLES having various columns)
+each table should have a primary key
+
+
+### DAX
+sales = transcations_data[quantity] * RELATED(Products[product_retail_price])
+
+SUMX(Table, Expression)
+total_sales = SUMX(transcations_data, transcations_data[quantity]* RELATED(Products[product_retail_price]))
+
+calculate_total_sales = CALCULATE([total_sales], Regions[sales_region]="Mexico West")
+
+KEEP FILTERS
+keep_filter_total_sales = CALCULATE([total_sales], KEEPFILTERS(Regions[sales_region]="Mexico West"))
+for every calculate filter if we only want to show the data for that one particular row (on which filter is applied)
+other rows will be left blank
+
+### Variable in DAX
+more_than_3 =
+VAR __filter3 = FILTER(transcations_data, transcations_data[quantity]>3)
+VAR __count3 = COUNTROWS(__filter3)
+RETURN
+__count3
+
+
+### TIME FUNCTION
+Only works on continous dates
+CALENDAR(date(start_date),date( end_date))
+calendar = CALENDAR(date(2025,01,01), date(2025,31,12))   
+now convert to table
+Now mark as table in data pane
+sales_QTD = CALCULATE([total_sales], DATESQTD('Calendar'[Date]))
+sales_YTD = CALCULATE([total_sales], DATESYTD('Calendar'[Date]))
+
+YoY Growth % = 
+VAR CurrentYear = SUM('Sales'[Revenue])
+VAR PreviousYear = CALCULATE(SUM('Sales'[Revenue]), SAMEPERIODLASTYEAR('Date'[Date]))
+RETURN DIVIDE(CurrentYear - PreviousYear, PreviousYear)
+
+previous_month_sales = CALCULATE([sales_done],PREVIOUSMONTH('calendar'[Date]))
+
+
+
+
+### RANK AND DENSE RANK
+RANK() skips numbers after ties (e.g., 1, 2, 2, 4), while DENSE_RANK() assigns consecutive ranks without gaps (e.g., 1, 2, 2, 3)
+rank_cal = rankx(employee_table, employee_table[salary], ASC, skip)
+skip means rank func. dense meanse dense_rank
+eg for rank
+marks  rank    dense rank
+10      1          1
+10      1          1
+20      3          2
+30      4          3
+30      4          3
+40      6          4
+
+SELECT name, salary,
+       RANK() OVER (ORDER BY salary DESC) AS rank_value
+FROM employees;
+
+
+
+Langage used in power queryis called - M (Mashup Data)
+
+# DATA PIPELINE
+from staging layer - Integration (warehouse) - presentation/ business layer
+data travels from these layers to presentation layer using pipelines
+This whole process is called orchestration
+
+
+When report is published it has 2 things
+1. report
+2. semantic model (it is actual data)
+
+### # POWER BI REPORT Optimization
+1. Minimise visuals
+2. Kep KPIs, use multirow card instead of single-single seperate card for each 
+3. Avoid excessive slicers (use dropdown, onstead of list)
+4. Use performance analyser
+5. Clear all slicers (in VIEW - BUTTONS - Clear all slicers)
+6. Icremental Rendering - First use the Overview, then detailed view then more detailed 
+7. use drillthrough, buttons, bookmarks
+
+### DRILL THROUGH
+If we have 2 sheets, one has category charts one days details about the sales for category table
+If I click on a particular category of the chart it should highlight sales for that category in other sheet
+
+Page 2 with data - FORMAT PANE - PAge information - Drill through - keep all filters
+Drill through from - select category
+now go to chat - right click - drill through 
+
+
+
+
+ ### TOOLTIP In POWER BI
+Very easy
+in bulid pane
+where we select x axis and y axis we can see in bottom
+USed for getting additional details for each bar in chart
+
+
+### BOOKMARK
+View - Bookmark - Add bookmark
+in selection pane - hide 1 chart, now select both of the charts, now 3 dots - update
+So it will bediiden on click of this bookmark
+
+
+### Many-to-many 
+relationships in Power BI should generally be avoided because they cause ambiguous,
+bidirectional filtering, which leads to incorrect, inflated, or inconsistent data, especially in calculated totals.
+
+
+
+### PBIDS file - .pbids files It takes credentials from user it he tries to open it
+3 storage modes -
+1. Import
+2. Direct Query
+3. LIVE
+
+Now in 1st - IMPORT, simply ALL the selected tables get loaded, just like normally we do
+in 2nd - DIRECT QUERY, the table view will NOT be visible, only model view and report view will be visible.
+If we go in model view here we will see TABLE storage mode
+
+LIMITATIONs of DIRECT Query -
+DAX functions are limited (non-supported ones - RANKX, Time intelligence functions)
+
+
+
+### Q - why refreshing data is important in power BI
+We refresh data in Power BI to keep reports accurate and relevant by pulling the latest information from original sources
+
+### Q - How can we check size of data
+In DAX studios - Advanced -  Metrics - (Important information about size of data, size of each column, cardinality)
+
+### What is  Cardinality??
+cardinality defines the nature of the relationship between two tables by specifying how many rows in one table relate to rows in another
+Common Cardinality Types:
+One-to-Many (1:*): One record in Table A relates to multiple records in Table B (e.g., one Customer to many Orders).
+Many-to-One (*:1): The reverse of 1:*, where multiple rows in Table A link to a single row in Table B (e.g., many Orders to one Customer).
+One-to-One (1:1): Each record in Table A has exactly one related record in Table B, and vice versa (e.g., splitting a large table).
+Many-to-Many (*:*): Rows in both tables can have multiple related rows (e.g., Products and Tags). 
+Used for Filtering, to ensure correct connections
+
+### DAX queries always start with EVALUATE
+
+### What is VERTIPAQ Engine
+when data is loaded vertipaq engine helps to load data in staging layer, so that it is easier to access the data
+Comperssion enngine bulit in Power BI architecture, Helps to improve performance of DAX queries.
+It retrives the data from data source and then it provides the queries that formula engine (FE) needs to answer DAX questions
+
+
+
+### Why we clear CACHE in DAX Studios?
+When we execute a query, part of query, like the storage engine query is cached, is kept in memory already computed. And this is useful because the next time the engine needs same data,
+it needs not to scan the whole database.
+If we are doing analysis clearing the cache is important. If we do not clear cache we might not get accurate results. 
+It ensures your query timings reflect actual runtime.
+
+### DAX OPTIMISATION
+
+1. instead of long decimal use upto 4 digit after . 
+2. Date and time field together takes a lot of space, seperate them in 2 columns
+3. Database Normalization - redundancy (repetation of data) should be less
+4. Star schema - it reduces the redundancy, easy to manage, less data columns
+5. Load summary data
+6. Disable load for tables not getting used
+7. Use external tools - Multipac analyser, tabular editor, DAX studio
+8. While forming relations use numeric columns to create a relationship instead of textual column
+
+9. use measure in DAX instead of calculated columns
+10. convert multiple measures to variable
+
+
+### POWER BI REPORT Optimization
+1. Minimise visuals
+2. Kep KPIs, use multirow card instead of single-single seperate card for each 
+3. Avoid excessive slicers (use dropdown, onstead of list)
+4. Use performance analyser
+5. Clear all slicers (in VIEW - BUTTONS - Clear all slicers)
+6. Icremental Rendering - First use the Overview, then detailed view then more detailed 
+7. use drillthrough, v=buttons, bookmarks
+
+### IN DAX SE and FE
+FE - formula engine (yellow colour)
+Responsible for interpreting DAX and coordinating the query
+Works in RAM only
+Breaks the DAX into smaller tasks and sends requests to SE if needed
+Performs row-by-row iterators (like FILTER, SUMX, ADDCOLUMNS)
+Slower compared to SE
+
+SE - storage engine (blue colour)
+Fetches actual data from compressed storage
+Handles simple aggregations:
+SUM, COUNT, MIN, MAX over columns
+Uses highly optimized operations
+
+### Which is faster SE or FE?
+The Storage Engine is generally much faster for data retrieval because it's optimized for reading massive amounts of compressed, columnar data in parallel (multi-threaded), while the Formula Engine handles complex row-by-row logic, aggregation, and functions
+
+### EVALUATION in DAX Studios
+Eager vs. Strict Evaluation: These are internal engine behaviors related to how conditional statements (IF) are processed.
+Strict Evaluation (default behavior for most modern DAX) only computes the branch of the condition that is true.
+Eager Evaluation computes both branches and then selects the appropriate result. Understanding this distinction can be important for performance optimization. 
+
+
+# HOW TO OPTIMIZE QUERY in DAX STUDIOS
+use its Server Timings feature to analyze performance bottlenecks, followed by targeted re-writing of the DAX code based on best practices. 
+Refactor the DAX Query: Based on the analysis of the Server Timings and Query Plan, rewrite the inefficient parts of the query using DAX best practices. Common techniques include:
+Using variables (VAR) to store intermediate results and avoid repetitive calculations.
+Preferring simpler aggregations (like SUM or AVERAGE) over iterators (SUMX, AVERAGEX) where possible.
+Using KEEPFILTERS() instead of FILTER() to maintain the existing filter context.
+Avoiding filters on high-cardinality string columns; use ID columns instead.
+Leveraging SUMMARIZECOLUMNS for aggregations instead of SUMMARIZE.
+
+### PARQUET FILE
+A Parquet file is an open-source, columnar storage format for big data, efficiently storing large datasets by organizing data by column instead of rows
+
+### ROI = (Net Profit / Cost of Investment) x 100% Return of Investment
+
+###  Revenue = Price per Unit × Quantity Sold
+
+### Why we use drillthrough
+We use Drillthrough in Power BI to let users jump from a summary report (like total sales by region) to a detailed page (like all transactions 
+for that specific region) by right-clicking a data point, enabling deep, context-filtered analysis without cluttering the main dashboard
+
+
+### Lower Cardinality leads to More Optimised Data, Distinct count - High  
+
+### Which Power BI services license have you used?
+Power BI license - ** Power BI Pro**
+They can then share content in that workspace with colleagues who have any license type. Only users with a Pro or PPU license can create and save content in Premium capacities, and only if their organization purchased Premium capacity.
+
+### Which storage mode have you used?
+IMPORT Mode
+
+### IMPORT vs DIRECT QUERY
+Import Mode
+Best For: Most users, small-to-medium datasets, high interactivity, complex modeling.
+Pros: Fastest query performance (in-memory), full Power Query/DAX, no source dependency.
+Cons: Data is a snapshot (needs refresh), size limits (Premium helps), potential large file sizes. 
+DirectQuery Mode
+Best For: Very large datasets, near real-time data, when you can't import.
+Pros: No size limits, always fresh data, data stays in the source.
+Cons: Slower performance (queries source live), limited transformations/DAX, source dependency. 
+
+
+### Slicers must come from DIMENSION tables and dimensions must filter FACT tables
+
+### Which Power BI License you are using and why?
+power bi pro license we are using.
+because create, share, and collaborate on reports. It allows for real-time collaboration and integration with other Microsoft services.
+
+### FACT and DIMENSION
+ACT - You have a box of events → “things that happened”
+DIMENSION - And you have labels → “who, when, what kind”
+
+
+### RLS
+Restrict data 
+Modeling - manage roles
+name it
+select the table then write
+[region]="Germany" save
+
+In power BI services - got to report 3 dot - security
+you can add members
+
+
+### CTE -
+A CTE is a temporary result set that you can use inside a query.
+Exists only during query
+
+### WINDOW FUNCTION
+to use with all rows
+like we want average of all rows across all columns
+avg(salary) over() as overall_salary
+
+now if we want to partition by dept 
+
+avg(salary) over(partition by dept) as overall_salary
+
+
+
+### difference between where and having
+WHERE → filters rows
+HAVING → filters groups (aggregated data)  - used with group by
+
+
+### QUERY Optimization in SQL
+select only required column
+limit your results using limit
+consider CTEs
+use joins smartly
+
+
+### Query folding in ower BI
+The operations reflect in original data, the transformation are pushed to the source
+SQL data socurce supports query folding (csv and xlsx does not)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
