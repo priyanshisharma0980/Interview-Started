@@ -18,6 +18,34 @@ Then DESIGN - Report layout - Show in Tabluar form
 =squenece(10)
 
 
+### DATA ANALYST vs DATA SCIENTIST
+Business Analyst: Focuses on understanding business needs, defining problems, and recommending solutions. Requires strong communication and problem-solving skills.
+Data Analyst: Collects, cleans, analyzes, and visualizes data to uncover insights and support decision-making. Requires strong technical and analytical skills.
+Data Scientist: Builds predictive models, develops machine learning algorithms, and conducts advanced statistical analysis. Requires expertise in statistics, programming, and machine learning.
+Business Intelligence Analyst: Designs and develops dashboards, reports, and visualizations to communicate insights to stakeholders. Requires a blend of technical, analytical, and communication skills.
+Data Engineer: Designs, builds, and maintains data pipelines and infrastructure to support data analysis. Requires strong technical skills in data warehousing, ETL (Extract, Transform, Load) processes, and cloud computing.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
