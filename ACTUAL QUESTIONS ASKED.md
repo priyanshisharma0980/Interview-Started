@@ -26,6 +26,21 @@ Business Intelligence Analyst: Designs and develops dashboards, reports, and vis
 Data Engineer: Designs, builds, and maintains data pipelines and infrastructure to support data analysis. Requires strong technical skills in data warehousing, ETL (Extract, Transform, Load) processes, and cloud computing.
 
 
+### First step of data analysis
+"Before analyzing the dataset, I would first understand the business context and objective. Then I would perform data profiling to understand the structure,     columns, data types, missing values, duplicates, and overall data quality. Once I understand both the business requirement and the dataset, I can proceed with     cleaning, analysis, and visualization."      
+ 
+Business Requirement Meeting     
+Requirement Document (BRD/User Story)     
+Source Identification     
+Data Access Request    
+Data Profiling    
+Data Cleaning & Validation     
+SQL Analysis / ETL    
+Data Modeling   
+Dashboard Development   
+UAT (User Acceptance Testing)    
+Deployment    
+Maintenance & Enhancements    
 
 
 
